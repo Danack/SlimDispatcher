@@ -10,9 +10,11 @@ use SlimAuryn\SlimAurynInvokerFactory;
 use SlimAurynTest\BaseTestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response;
 
 
+/**
+ * @group wip
+ */
 class SlimAurynInvokerFactoryTest extends BaseTestCase
 {
     public function testCreate()
@@ -37,14 +39,16 @@ class SlimAurynInvokerFactoryTest extends BaseTestCase
     public function testCreateAndMappers()
     {
         $stringMapperUsed = false;
-        $stringToResponseMapper = function(string $value, ResponseInterface $response) use (&$stringMapperUsed) {
+        $stringToResponseMapper = function(string $value/*, ResponseInterface $response*/) use (&$stringMapperUsed) {
+            $response = createResponse();
             $response = $response->withStatus(420);
             $stringMapperUsed = true;
             return $response;
         };
 
         $stdClassMapperUsed = false;
-        $stdClassResponseMapper = function(\StdClass $stdClass, ResponseInterface $response) use (&$stdClassMapperUsed) {
+        $stdClassResponseMapper = function(\StdClass $stdClass /*, ResponseInterface $response*/) use (&$stdClassMapperUsed) {
+            $response = createResponse();
             $response = $response->withStatus(420);
             $stdClassMapperUsed = true;
             return $response;
@@ -76,8 +80,8 @@ class SlimAurynInvokerFactoryTest extends BaseTestCase
 
         /** @var $requestMock \Psr\Http\Message\ServerRequestInterface */
         $requestMock = $this->createMock(ServerRequestInterface::class);
-        $response = new Response();
-        $response = $invoker->__invoke($returnsAString, $requestMock, $response, []);
+//        $response = new Response();
+        $response = $invoker->__invoke($returnsAString, $requestMock,/* $response,*/ []);
         self::assertTrue($stringMapperUsed);
         self::assertFalse($stdClassMapperUsed);
         self::assertInstanceOf(ResponseInterface::class, $response);
@@ -87,8 +91,8 @@ class SlimAurynInvokerFactoryTest extends BaseTestCase
         $stringMapperUsed = false;
         /** @var $requestMock \Psr\Http\Message\ServerRequestInterface */
         $requestMock = $this->createMock(ServerRequestInterface::class);
-        $response = new Response();
-        $response = $invoker->__invoke($returnsAStdClass, $requestMock, $response, []);
+//        $response = new Response();
+        $response = $invoker->__invoke($returnsAStdClass, $requestMock, /*$response,*/ []);
         self::assertFalse($stringMapperUsed);
         self::assertTrue($stdClassMapperUsed);
         self::assertInstanceOf(ResponseInterface::class, $response);

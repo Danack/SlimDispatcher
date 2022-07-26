@@ -3,6 +3,8 @@
 namespace SlimAurynTest;
 
 use Auryn\Injector;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Slim\Interfaces\CallableResolverInterface;
 use SlimAuryn\Response\TextResponse;
 use SlimAuryn\RouteMiddlewares;
 use SlimAuryn\SlimAurynInvoker;
@@ -10,10 +12,15 @@ use SlimAuryn\SlimAurynException;
 use SlimAurynTest\BaseTestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response;
+use Laminas\Diactoros\Response;
 use SlimAuryn\RouteParams;
-use Slim\Route;
+// use Slim\Route;
+use Slim\Routing\Route;
+use Laminas\Diactoros\ResponseFactory;
 
+/**
+ * @group wip
+ */
 class SlimAurynInvokerTest extends BaseTestCase
 {
     /**
@@ -38,11 +45,11 @@ class SlimAurynInvokerTest extends BaseTestCase
 
         /** @var $requestMock \Psr\Http\Message\ServerRequestInterface */
         $requestMock = $this->createMock(ServerRequestInterface::class);
-        $response = new Response();
+//        $response = new Response();
         $returnedResponse = $invoker(
             $callable,
             $requestMock,
-            $response,
+//            $response,
             []
         );
 
@@ -72,8 +79,8 @@ class SlimAurynInvokerTest extends BaseTestCase
         );
 
         $requestReceived = null;
-        $callable = function (ResponseInterface $response) {
-
+        $callable = function (/*ResponseInterface $response*/) {
+            $response = createResponse();
             $response = $response->withStatus(420);
             /** @var $response \Psr\Http\Message\ResponseInterface */
             $response = $response->withHeader('Content-Type', 'text/awesome');
@@ -84,11 +91,11 @@ class SlimAurynInvokerTest extends BaseTestCase
         /** @var $requestMock \Psr\Http\Message\ServerRequestInterface */
         $requestMock = $this->createMock(ServerRequestInterface::class);
 
-        $response = new Response();
+//        $response = new Response();
         $returnedResponse = $invoker(
             $callable,
             $requestMock,
-            $response,
+//            $response,
             []
         );
 
@@ -127,7 +134,7 @@ class SlimAurynInvokerTest extends BaseTestCase
         $invoker(
             $callable,
             $requestMock,
-            $response,
+//            $response,
             []
         );
     }
@@ -162,7 +169,7 @@ class SlimAurynInvokerTest extends BaseTestCase
         $invoker(
             $callable,
             $requestMock,
-            $response,
+//            $response,
             []
         );
     }
@@ -174,14 +181,16 @@ class SlimAurynInvokerTest extends BaseTestCase
     public function testMapperIsUsed()
     {
         $stringMapperUsed = false;
-        $stringToResponseMapper = function(string $value, ResponseInterface $response) use (&$stringMapperUsed) {
+        $stringToResponseMapper = function(string $value/*, ResponseInterface $response*/) use (&$stringMapperUsed) {
+            $response = createResponse();
             $response = $response->withStatus(420);
             $stringMapperUsed = true;
             return $response;
         };
 
         $stdClassMapperUsed = false;
-        $stdClassResponseMapper = function(\StdClass $stdClass, ResponseInterface $response) use (&$stdClassMapperUsed) {
+        $stdClassResponseMapper = function(\StdClass $stdClass /*, ResponseInterface $response*/) use (&$stdClassMapperUsed) {
+            $response = createResponse();
             $response = $response->withStatus(420);
             $stdClassMapperUsed = true;
             return $response;
@@ -211,8 +220,8 @@ class SlimAurynInvokerTest extends BaseTestCase
 
         /** @var $requestMock \Psr\Http\Message\ServerRequestInterface */
         $requestMock = $this->createMock(ServerRequestInterface::class);
-        $response = new Response();
-        $response = $invoker->__invoke($returnsAString, $requestMock, $response, []);
+//        $response = new Response();
+        $response = $invoker->__invoke($returnsAString, $requestMock, /* $response, */ []);
         self::assertTrue($stringMapperUsed);
         self::assertFalse($stdClassMapperUsed);
         self::assertInstanceOf(ResponseInterface::class, $response);
@@ -223,7 +232,7 @@ class SlimAurynInvokerTest extends BaseTestCase
         /** @var $requestMock \Psr\Http\Message\ServerRequestInterface */
         $requestMock = $this->createMock(ServerRequestInterface::class);
         $response = new Response();
-        $response = $invoker->__invoke($returnsAStdClass, $requestMock, $response, []);
+        $response = $invoker->__invoke($returnsAStdClass, $requestMock, /*$response,*/ []);
         self::assertFalse($stringMapperUsed);
         self::assertTrue($stdClassMapperUsed);
         self::assertInstanceOf(ResponseInterface::class, $response);
@@ -241,7 +250,7 @@ class SlimAurynInvokerTest extends BaseTestCase
         };
 
         $request = createRequestForTesting();
-        $response = new Response();
+//        $response = new Response();
 
         $injector = new Injector();
         $routeMiddlewares = new RouteMiddlewares();
@@ -259,7 +268,7 @@ class SlimAurynInvokerTest extends BaseTestCase
         $invoker->__invoke(
             $checkRouteParamsFn,
             $request,
-            $response,
+//            $response,
             $routeArgs
         );
 
@@ -269,6 +278,7 @@ class SlimAurynInvokerTest extends BaseTestCase
 
     public function testSetupCallableCalledCorrectly()
     {
+        $this->markTestSkipped("setupCallable's are probably a bad idea.");
         $checkRouteParamsFn = function () {
             return 'hello world';
         };
@@ -280,7 +290,6 @@ class SlimAurynInvokerTest extends BaseTestCase
         };
 
         $request = createRequestForTesting();
-        $response = new Response();
 
         $injector = new Injector();
         $routeMiddlewares = new RouteMiddlewares();
@@ -294,16 +303,18 @@ class SlimAurynInvokerTest extends BaseTestCase
         $route = new Route(
             $methods = ['GET'],
             $pattern = '/',
-            $callable = 'not_used'
+            $callable = 'not_used',
+            $responseFactory = new ResponseFactory(),
+            $callableResolver = new TestCallableResolver(),
         );
 
         $route->setArgument('setupCallable', $setupFn);
 
-        $request = $request->withAttributes(['route' => $route]);
+        $request = $request->withAttribute('route', $route);
         $invoker->__invoke(
             $checkRouteParamsFn,
             $request,
-            $response,
+//            $response,
             []
         );
 

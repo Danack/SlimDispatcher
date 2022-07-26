@@ -18,8 +18,16 @@
       <!-- This doens't seem to work-->
     </testsuite>
   </testsuites>
+
+  <groups>
+    <exclude><!-- I want to EXCLUDE this group, run all others -->
+      <group>integration</group>
+    </exclude>
+  </groups>
+
   <!--<listeners>-->
   <!--<listener class="Mockery\Adapter\Phpunit\TestListener"/>-->
   <!--</listeners>-->
   <logging/>
 </phpunit>
+

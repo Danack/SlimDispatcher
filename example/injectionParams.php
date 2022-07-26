@@ -6,7 +6,7 @@ function injectionParams(): InjectionParams
 {
     // These classes will only be created once by the injector.
     $shares = [
-        \Twig_Environment::class,
+        \Twig\Environment::class,
         \Auryn\Injector::class,
         \SlimAuryn\RouteMiddlewares::class,
     ];
@@ -20,8 +20,8 @@ function injectionParams(): InjectionParams
     // Delegate the creation of types to callables.
     $delegates = [
         Psr\Log\LoggerInterface::class => 'createLogger',
-        Twig_Environment::class => 'createTwigForSite',
-        SlimAuryn\SlimAurynInvokerFactory::class => 'createSlimAurynInvokerFactory',
+        Twig\Environment::class => 'createTwigForSite',
+//        SlimAuryn\SlimAurynInvokerFactory::class => 'createSlimAurynInvokerFactory',
 
         SlimAuryn\ExceptionMiddleware::class => 'createExceptionMiddleware',
     ];

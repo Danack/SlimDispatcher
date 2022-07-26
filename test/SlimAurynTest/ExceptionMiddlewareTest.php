@@ -4,54 +4,62 @@ declare(strict_types=1);
 
 namespace SlimAurynTest;
 
-use SlimAurynTest\BaseTestCase;
-use SlimAuryn\ExceptionMiddleware;
+use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface;
-use SlimAurynTest\MappedException;
-use SlimAurynTest\UnmappedException;
-use Slim\Http\Response;
-use Slim\Http\Request;
-use Slim\Http\Body;
-use Slim\Http\Uri;
-use Slim\Http\Headers;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
+use SlimAuryn\ExceptionMiddleware;
 
+/**
+ * @group wip
+ */
 class ExceptionMiddlewareTest extends BaseTestCase
 {
-    public function testCallableCalledProperly()
-    {
-        $nextFn = function (Request $request, ResponseInterface $response) {
-            return 'Test output';
-        };
-
-        $responseString = $this->performRequest(
-            $nextFn,
-            [],
-            []
-        );
-
-
-        $this->assertEquals('Test output', $responseString);
-    }
+    // This can't be tested like this.
+//    public function testCallableCalledProperly()
+//    {
+//        $nextFn = function (Request $request, ResponseInterface $response) {
+//            return 'Test output';
+//        };
+//
+//
+//        $responseString = $this->invokeMiddleware(
+//            $nextFn,
+//            [],
+//            []
+//        );
+//
+//
+//        $this->assertEquals('Test output', $responseString);
+//    }
 
 
     public function testParseErrorMappedProperly()
     {
-        $nextFn = function (Request $request, ResponseInterface $response) {
-            return eval('return $x + 4a');
+//        $nextFn = function (Request $request, ResponseInterface $response) {
+//            return eval('return $x + 4a');
+//        };
+
+        $requestHandler = new class () implements RequestHandler {
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                return eval('return $x + 4a');
+            }
         };
 
         $message = null;
 
-        $handleException = function (\ParseError $exception, ResponseInterface $response) use (&$message) {
+        $handleException = function (\ParseError $exception/*, ResponseInterface $response*/) use (&$message) {
+            $response = createResponse();
             $message = $exception->getMessage();
-
             $response = $response->withStatus(503);
 
             return $response;
         };
 
-        $response = $this->performRequest(
-            $nextFn,
+        $response = $this->processMiddleware(
+            $requestHandler,
             [],
             [\ParseError::class => $handleException]
         );
@@ -72,16 +80,21 @@ class ExceptionMiddlewareTest extends BaseTestCase
         $this->assertSame(503, $response->getStatusCode());
     }
 
-
-
     public function testExceptionResultConvertedToResponse()
     {
+//        $nextFn = function (Request $request, ResponseInterface $response) {
+//            throw new MappedException("This is a mapped exception.");
+//        };
 
-        $nextFn = function (Request $request, ResponseInterface $response) {
-            throw new MappedException("This is a mapped exception.");
+        $requestHandler = new class () implements RequestHandler {
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                throw new MappedException("This is a mapped exception.");
+            }
         };
 
-        $convertStringToHtmlResponseFn = function (string $result, ResponseInterface $response) {
+        $convertStringToHtmlResponseFn = function (string $result) {//, ResponseInterface $response) {
+            $response = createResponse();
             $response = $response->withHeader('Content-Type', 'text/html');
             $response->getBody()->write($result . " That was mapped to html");
             return $response;
@@ -91,16 +104,22 @@ class ExceptionMiddlewareTest extends BaseTestCase
             'string' => $convertStringToHtmlResponseFn
         ];
 
-        $exceptionMappers = [
-            MappedException::class => function (MappedException $mappedException) {
+        $requestPassedIn = null;
+
+        $exceptionHandlerToResponseList = [
+            MappedException::class => function (
+                MappedException $mappedException,
+                Request $request,
+            ) use (&$requestPassedIn) {
+                $requestPassedIn = $request;
                 return $mappedException->getMessage();
             }
         ];
 
-        $response = $this->performRequest(
-            $nextFn,
+        $response = $this->processMiddleware(
+            $requestHandler,
             $resultMappers,
-            $exceptionMappers
+            $exceptionHandlerToResponseList
         );
 
         $response->getBody()->rewind();
@@ -117,11 +136,19 @@ class ExceptionMiddlewareTest extends BaseTestCase
 
     public function testExceptionUnmappedEscapes()
     {
-        $nextFn = function (Request $request, ResponseInterface $response) {
-            throw new UnmappedException("This is an unmapped exception.");
+//        $nextFn = function (Request $request, ResponseInterface $response) {
+//            throw new UnmappedException("This is an unmapped exception.");
+//        };
+
+        $requestHandler = new class () implements RequestHandler {
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                throw new UnmappedException("This is an unmapped exception.");
+            }
         };
 
-        $convertStringToHtmlResponseFn = function (string $result, ResponseInterface $response) {
+        $convertStringToHtmlResponseFn = function (string $result) {// , ResponseInterface $response) {
+            $response = createResponse();
             $response = $response->withHeader('Content-Type', 'text/html');
             $response->getBody()->write($result . " That was mapped to html");
             return $response;
@@ -139,89 +166,95 @@ class ExceptionMiddlewareTest extends BaseTestCase
 
         $this->expectException(UnmappedException::class);
         $this->expectExceptionMessage("This is an unmapped exception.");
-        $this->performRequest(
-            $nextFn,
+        $this->processMiddleware(
+            $requestHandler,
             $resultMappers,
             $exceptionMappers
         );
     }
 
-    public function testAllThreeParametersArePassedCorrectly()
-    {
-        $requestUsed = null;
-        $responseUsed = null;
+//    public function testAllThreeParametersArePassedCorrectly()
+//    {
+//        $requestUsed = null;
+//        $responseUsed = null;
+//
+//        $fn = function (
+//            MappedException $mappedException,
+//            $response,
+//            $request
+//        ) use (&$requestUsed, &$responseUsed) {
+//            $requestUsed = $request;
+//            $responseUsed = $response;
+//            return $mappedException->getMessage();
+//        };
+//
+//        $exceptionHandlers = [
+//            MappedException::class => $fn
+//        ];
+//
+//        $request = $this->createRequest();
+//
+//        $mapStringToHtmlResponseFn = function (string $result, ResponseInterface $response)
+//        {
+//            $response = $response->withHeader('Content-Type', 'text/html');
+//            $response->getBody()->write($result . " That was mapped to html");
+//            return $response;
+//        };
+//
+//        $resultMappers = [
+//            'string' => $mapStringToHtmlResponseFn
+//        ];
+//
+//        $exceptionMiddleware = new ExceptionMiddleware(
+//            $exceptionHandlers,
+//            $resultMappers
+//        );
+//
+//        $requestHandler = new class () implements RequestHandlerInterface {
+//            public function handle(ServerRequestInterface $request): ResponseInterface
+//            {
+//                throw new MappedException("This is a mapped exception.");
+//            }
+//        };
+//
+//
+//        $response = $exceptionMiddleware->__invoke($request, $requestHandler);
+//
+//        $this->assertSame($request, $requestUsed);
+//        $this->assertSame($response, $responseUsed);
+//    }
 
-        $fn = function (
-            MappedException $mappedException,
-            $response,
-            $request
-        ) use (&$requestUsed, &$responseUsed) {
-            $requestUsed = $request;
-            $responseUsed = $response;
-            return $mappedException->getMessage();
-        };
-
-        $exceptionHandlers = [
-            MappedException::class => $fn
-        ];
-
-        $response = new Response();
-        $request = $this->createRequest();
-
-        $convertStringToHtmlResponseFn = function (string $result, ResponseInterface $response) {
-            $response = $response->withHeader('Content-Type', 'text/html');
-            $response->getBody()->write($result . " That was mapped to html");
-            return $response;
-        };
-
-        $resultMappers = [
-            'string' => $convertStringToHtmlResponseFn
-        ];
+    public function processMiddleware(
+        RequestHandler $requestHandler,
+        $resultMappers,
+        $exceptionHandlers
+    ): Response {
+        // $request = $this->createRequest();
+        $request = createRequestForTesting();
 
         $exceptionMiddleware = new ExceptionMiddleware(
             $exceptionHandlers,
             $resultMappers
         );
 
-        $nextFn = function (Request $request, ResponseInterface $response) {
-            throw new MappedException("This is a mapped exception.");
-        };
-
-        $exceptionMiddleware->__invoke($request, $response, $nextFn);
-
-        $this->assertSame($request, $requestUsed);
-        $this->assertSame($response, $responseUsed);
+        return $exceptionMiddleware->process($request, $requestHandler);
     }
 
-    public function performRequest($nextFn, $resultMappers, $exceptionHandlers)
-    {
-        $response = new Response();
-
-        $request = $this->createRequest();
-
-        $exceptionMiddleware = new ExceptionMiddleware(
-            $exceptionHandlers,
-            $resultMappers
-        );
-
-        return $exceptionMiddleware->__invoke($request, $response, $nextFn);
-    }
-
-    private function createRequest()
-    {
-        $headers = [];
-        $bodyContent = '';
-        $cookies = [];
-
-        $uri = Uri::createFromString('https://user:pass@host:443/path?query');
-        $headers = new Headers($headers);
-        $serverParams = [];
-        $body = new Body(fopen('php://temp', 'r+'));
-        $body->write($bodyContent);
-        $body->rewind();
-        $method = 'GET';
-        $request = new Request($method, $uri, $headers, $cookies, $serverParams, $body);
-
-        return $request;
-    }
+//    private function createRequest()
+//    {
+//        $request = new ServerRequest(
+//            $serverParams = [],
+//            $uploadedFiles = [],
+//            $uri = 'https://user:pass@host:443/path?query',
+//            $method = 'GET',
+//            $body = 'php://input',
+//            $headers = [],
+//            $cookies = [],
+//            $queryParams = [],
+//            $parsedBody = null,
+//            $protocol = '1.1'
+//        );
+//
+//        return $request;
+//    }
 }

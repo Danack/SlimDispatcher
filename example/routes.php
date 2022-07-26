@@ -9,5 +9,8 @@ return [
     ['/test_di/interface_is_unaliased', 'GET',  'SlimAurynExample\TestController::testHowFooIsMade' ],
     ['/test_di/interface_is_delegated', 'GET',  'SlimAurynExample\TestController::testHowFooIsMade', 'setupFooDelegate' ],
 
+    ['/say/{name:.*}', 'GET', 'SlimAurynExample\ResponseController::sayHello'],
+
     ['/', 'GET', 'SlimAurynExample\ResponseController::getHomePage'],
 ];
+

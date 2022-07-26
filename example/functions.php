@@ -5,11 +5,16 @@ use SlimAuryn\Response\StubResponse;
 use Slim\App;
 use Auryn\Injector;
 
+
 use SlimAurynTest\Foo\Foo;
 use SlimAurynTest\Foo\StandardFoo;
 use SlimAuryn\RouteMiddlewares;
 use SlimAurynExample\SingleRouteMiddleware;
 use SlimAurynExample\SingleRouteWithMessageMiddleware;
+use Laminas\Diactoros\ResponseFactory;
+use Laminas\Diactoros\ServerRequest;
+use Twig\Loader\FilesystemLoader as TwigFilesystemLoader;
+use Twig\Environment as TwigEnvironment;
 
 /**
  * @return \Monolog\Logger
@@ -25,16 +30,16 @@ function createLogger(): \Monolog\Logger
 }
 
 /**
- * @return Twig_Environment
+ * @return TwigEnvironment
  */
-function createTwigForSite(): Twig_Environment
+function createTwigForSite(): TwigEnvironment
 {
     $templatePaths = [
         __DIR__ . '/./templates' // shared templates.
     ];
 
-    $loader = new Twig_Loader_Filesystem($templatePaths);
-    $twig = new Twig_Environment($loader, array(
+    $loader = new TwigFilesystemLoader($templatePaths);
+    $twig = new TwigEnvironment($loader, array(
         'cache' => false,
         'strict_variables' => true,
         'debug' => true
@@ -110,16 +115,20 @@ function getExceptionMappers(): array
 
 
 // Define a function that writes a string into the response object.
-function convertStringToHtmlResponse(string $result, ResponseInterface $response): ResponseInterface
-{
+function convertStringToHtmlResponse(
+    string $result
+    //ResponseInterface $response
+): ResponseInterface {
+    $response = createResponse();
+
     $response = $response->withHeader('Content-Type', 'text/html');
     $response->getBody()->write($result);
     return $response;
 }
 
 function psr7ResponsePassThrough(
-    ResponseInterface $controllerResult,
-    ResponseInterface $originalResponse
+    ResponseInterface $controllerResult//,
+//    ResponseInterface $originalResponse
 ): ResponseInterface {
     return $controllerResult;
 }
@@ -127,8 +136,11 @@ function psr7ResponsePassThrough(
 
 function mapToPsr7Response(
     StubResponse $builtResponse,
-    ResponseInterface $response
+//    ResponseInterface $response
 ): ResponseInterface {
+
+    $response = createResponse();
+
     $response = $response->withStatus($builtResponse->getStatus());
     foreach ($builtResponse->getHeaders() as $key => $value) {
         /** @var \Psr\Http\Message\ResponseInterface $response */
@@ -191,4 +203,11 @@ function setupRoutes(App $app)
             $slimRoute->setArgument('setupCallable', $setupCallable);
         }
     }
+}
+
+
+function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
+{
+    $responseFactory = new ResponseFactory();
+    return $responseFactory->createResponse($code, $reasonPhrase);
 }

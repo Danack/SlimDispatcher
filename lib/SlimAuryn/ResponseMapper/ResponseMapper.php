@@ -60,6 +60,7 @@ class ResponseMapper
         ResponseInterface $controllerResult,
         ResponseInterface $originalResponse
     ) {
+        // TODO - this may be bad. Should we copy
         return $controllerResult;
     }
 }

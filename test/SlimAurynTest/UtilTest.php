@@ -13,7 +13,7 @@ use SlimAuryn\RouteParams;
 use SlimAurynTest\BaseTestCase;
 
 
-class SlimAurynInvoker_SetInjectorInfoTest extends BaseTestCase
+class UtilTest extends BaseTestCase
 {
     public function testSetInjectorInfo(): void
     {
@@ -21,14 +21,14 @@ class SlimAurynInvoker_SetInjectorInfoTest extends BaseTestCase
 
         /** @var $requestMock \Psr\Http\Message\ServerRequestInterface */
         $requestMock = $this->createMock(ServerRequestInterface::class);
-        /** @var $responseMock \Psr\Http\Message\ResponseInterface */
-        $responseMock = $this->createMock(ResponseInterface::class);
+//        /** @var $responseMock \Psr\Http\Message\ResponseInterface */
+//        $responseMock = $this->createMock(ResponseInterface::class);
         $routeArguments = ['foo' => 'bar'];
 
         Util::setInjectorInfo(
             $injector,
             $requestMock,
-            $responseMock,
+//            $responseMock,
             $routeArguments
         );
 
@@ -36,8 +36,8 @@ class SlimAurynInvoker_SetInjectorInfoTest extends BaseTestCase
         $builtRequest = $injector->make(ServerRequestInterface::class);
         self::assertSame($requestMock, $builtRequest);
 
-        $builtResponse = $injector->make(ResponseInterface::class);
-        self::assertSame($responseMock, $builtResponse);
+//        $builtResponse = $injector->make(ResponseInterface::class);
+//        self::assertSame($responseMock, $builtResponse);
 
         // Check that the param is available by name
         $fn = function ($foo) {

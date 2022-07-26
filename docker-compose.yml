@@ -9,6 +9,8 @@ services:
     build: docker/php_fpm_debug
     depends_on:
       - php_fpm
+    environment:
+      - PHP_IDE_CONFIG=serverName=SLIM4AURYN_DEBUG
     volumes:
       - .:/var/app
   nginx:

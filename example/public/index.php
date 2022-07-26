@@ -1,6 +1,13 @@
 <?php
 
+use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Laminas\Diactoros\ResponseFactory;
 use Slim\CallableResolver;
+use Slim\Interfaces\CallableResolverInterface;
+use Slim\Interfaces\MiddlewareDispatcherInterface;
+use Slim\Interfaces\RouteCollectorInterface;
+use Slim\Interfaces\RouteResolverInterface;
 use SlimAuryn\AurynCallableResolver;
 use SlimAuryn\SlimAurynInvokerFactory;
 use SlimAurynExample\AllRoutesMiddleware;
@@ -27,17 +34,24 @@ $injector->share($injector);
 
 // Create the app with the container set to use SlimAurynInvoker
 // for the 'foundHandler'.
-$container = new \Slim\Container;
-$container['foundHandler'] = $injector->make(SlimAurynInvokerFactory::class);
+
+//$invoker = $injector->make(SlimAurynInvokerFactory::class);
 
 $callableResolver = new AurynCallableResolver(
-    new CallableResolver($container),
-    $container
+    $injector,
+    $resultMappers = getResultMappers()
 );
 
-$container['callableResolver'] = $callableResolver;
+//$container['callableResolver'] = $callableResolver;
 
-$app = new \Slim\App($container);
+$app = new \Slim\App(
+    /* ResponseFactoryInterface */ $responseFactory = new ResponseFactory(),
+    /* ?ContainerInterface */ $container = null,
+    /* ?CallableResolverInterface */ $callableResolver,
+    /* ?RouteCollectorInterface */ $routeCollector = null,
+    /* ?RouteResolverInterface */ $routeResolver = null,
+    /* ?MiddlewareDispatcherInterface */ $middlewareDispatcher = null
+);
 
 // Configure any middlewares that should be applied to all routes here.
 $app->add(new AllRoutesMiddleware());
@@ -45,6 +59,10 @@ $app->add(new AllRoutesMiddleware());
 // Create a middleware that catches all otherwise uncaught application
 // level exceptions.
 $app->add($injector->make(ExceptionMiddleware::class));
+
+// Add Error Middleware
+// $errorMiddleware = $app->addErrorMiddleware(true, true, true);
+//$errorMiddleware->setDefaultErrorHandler($customErrorHandler);
 
 
 // Setup the routes for the app

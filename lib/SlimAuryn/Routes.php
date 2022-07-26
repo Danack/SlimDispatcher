@@ -30,6 +30,7 @@ class Routes
             $slimRoute = $app->map([$method], $path, $callable);
 
             if (array_key_exists(3, $route) === true) {
+                // TODO - kill $setupCallable
                 $setupCallable = $route[3];
                 $slimRoute->setArgument(SlimAurynInvoker::SETUP_ARGUMENT_NAME, $setupCallable);
             }

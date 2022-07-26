@@ -6,27 +6,40 @@ require __DIR__ . "/fixtures.php";
 require __DIR__ . "/../example/functions.php";
 require __DIR__ . "/../example/factories.php";
 
-use Slim\Http\Response;
-use Slim\Http\Request;
-use Slim\Http\Body;
-use Slim\Http\Uri;
-use Slim\Http\Headers;
+use Laminas\Diactoros\Request;
+use Laminas\Diactoros\ResponseFactory;
+use Laminas\Diactoros\ServerRequest;
+use Psr\Http\Message\ResponseInterface;
 
-
-
-
-function createRequestForTesting() : Request
+function createRequestForTesting() : ServerRequest
 {
-    $headers = [];
-    $bodyContent = '';
-    $cookies = [];
+//    $request = new Request(
+//        'https://user:pass@host:443/path?query',
+//        $method = 'GET',
+//        $headers = [],
+//        $serverParams = []
+//    );
 
-    $uri = Uri::createFromString('https://user:pass@host:443/path?query');
-    $headers = new Headers($headers);
-    $serverParams = [];
-    $body = new Body(fopen('php://temp', 'r+'));
-    $body->write($bodyContent);
-    $body->rewind();
-    $method = 'GET';
-    return new Request($method, $uri, $headers, $cookies, $serverParams, $body);
+    $request = new ServerRequest(
+        $serverParams = [],
+        $uploadedFiles = [],
+        $uri = 'https://user:pass@host:443/path?query',
+        $method = 'GET',
+        $body = 'php://input',
+        $headers = [],
+        $cookies = [],
+        $queryParams = [],
+        $parsedBody = null,
+        $protocol = '1.1'
+    );
+
+
+    return $request;
 }
+
+
+//function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
+//{
+//    $responseFactory = new ResponseFactory();
+//    return $responseFactory->createResponse($code, $reasonPhrase);
+//}

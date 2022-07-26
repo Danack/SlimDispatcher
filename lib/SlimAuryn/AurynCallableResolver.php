@@ -4,28 +4,19 @@ declare(strict_types = 1);
 
 namespace SlimAuryn;
 
-use Interop\Container\ContainerInterface;
+use Auryn\Injector;
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface as Response;
 use RuntimeException;
-use Slim\CallableResolver;
 use Slim\Interfaces\CallableResolverInterface;
 
 class AurynCallableResolver implements CallableResolverInterface
 {
-    private CallableResolver $callableResolver;
-
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
-
     public function __construct(
-        CallableResolver $callableResolver,
-        ContainerInterface $container
+        private Injector $injector,
+        private array $resultMappers
     ) {
-        $this->callableResolver = $callableResolver;
-        $this->container = $container;
     }
-
 
     /**
      * Resolve toResolve into a closure that that the router can dispatch.
@@ -40,19 +31,42 @@ class AurynCallableResolver implements CallableResolverInterface
      * @throws RuntimeException if the callable does not exist
      * @throws RuntimeException if the callable is not resolvable
      */
-    public function resolve($toResolve)
+    public function resolve($toResolve): callable
     {
-        $resolved = $toResolve;
+        $resolvedCallable = $toResolve;
 
-        if (is_array($resolved) === true) {
-            $class = $resolved[0];
-            $method = $resolved[1];
+        if (is_array($toResolve) === true) {
+            $class = $toResolve[0];
+            $method = $toResolve[1];
             if (class_exists($class) === true) {
                 if (method_exists($class, $method) === true) {
-                    return $resolved;
+                    return $toResolve;
                 }
             }
         }
+
+        $fn = function (
+            Request $request,
+            Response $response,
+            array $routeArguments
+        ) use ($resolvedCallable) {
+
+            Util::setInjectorInfo($this->injector, $request, $routeArguments);
+            // TODO - we could share $response
+
+            $result = $this->injector->execute($resolvedCallable);
+
+            return Util::mapResult(
+                $result,
+                $request,
+                $response,
+                $this->resultMappers
+            );
+        };
+
+        // TODO - the code below is proably also needed.
+        return $fn;
+
 
         if (!is_callable($toResolve) && is_string($toResolve)) {
             // check for slim callable as "class:method"
@@ -61,15 +75,15 @@ class AurynCallableResolver implements CallableResolverInterface
                 $class = $matches[1];
                 $method = $matches[2];
 
-                if ($this->container->has($class)) {
-                    $resolved = [$this->container->get($class), $method];
-                }
-                else {
+//                if ($this->container->has($class)) {
+//                    $resolved = [$this->container->get($class), $method];
+//                }
+//                else {
                     if (!class_exists($class)) {
                         throw new RuntimeException(sprintf('Callable %s does not exist', $class));
                     }
                     $resolved = [new $class($this->container), $method];
-                }
+//                }
             }
             else {
                 // check if string is something in the DIC that's callable or is a class name which

@@ -17,6 +17,7 @@ class RoutesTest extends BaseTestCase
         $route1 = Mockery::mock('Slim\Interfaces\RouteInterface');
         $route2 = Mockery::mock('Slim\Interfaces\RouteInterface');
 
+        // TODO - remove setup callable
         $route2
           ->shouldReceive('setArgument')
           ->withArgs([SlimAurynInvoker::SETUP_ARGUMENT_NAME, 'setup_callable']);

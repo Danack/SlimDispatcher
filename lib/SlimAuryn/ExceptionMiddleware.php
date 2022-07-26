@@ -4,48 +4,84 @@ declare(strict_types=1);
 
 namespace SlimAuryn;
 
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use SlimAuryn\Util;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-class ExceptionMiddleware
+class ExceptionMiddleware implements MiddlewareInterface
 {
     /**
-     * @var array
+     *
+     * @var array[{0:class-string, 1:callable}]
      * Convert particular exceptions to responses
+     *
+     * Callable should have the signature:
+     *
+     * function (
+     *   SomeException $mappedException,
+     *   Request $request,
+     * )
+     *
+     * Where SomeException and the class-string should be the same.
+     *
      */
-    private $exceptionMappers;
+    private array $exceptionToResponseHandlerList;
 
     /**
-     * @var array
+     * @var array[{0:class-string, 1:callable}]
      * Map custom results/responses to PSR7Responses
+     *
+     * These are called after the exception is converted to a stub response.
+     *
+     *
+     * Handler must have the signature
+     *
+     * $mapCallable(
+     *     $result,
+     *     Psr\Http\Message\ResponseInterface $request
+     * ): \Psr\Http\Message\ResponseInterface
+     *
      */
-    private $resultMappers;
+    private array $stubResponseToPSR7ResponseHandlerList;
 
-    public function __construct($exceptionHandlers, $resultMappers)
-    {
-        $this->exceptionMappers = $exceptionHandlers;
-        $this->resultMappers = $resultMappers;
+    /**
+     *
+     * @param $exceptionToResponseHandlerList
+     * @param $stubResponseToPSR7ResponseHandlerList
+     */
+    public function __construct(
+        array $exceptionToResponseHandlerList,
+        array $stubResponseToPSR7ResponseHandlerList
+    ) {
+        $this->exceptionToResponseHandlerList = $exceptionToResponseHandlerList;
+        $this->stubResponseToPSR7ResponseHandlerList = $stubResponseToPSR7ResponseHandlerList;
     }
 
-    public function __invoke(Request $request, ResponseInterface $response, $next)
+    /**
+     * @param Request $request
+     * @param RequestHandler $handler
+     * @return Response
+     */
+    public function process(Request $request, RequestHandler $handler): Response
     {
         try {
-            /** @var ResponseInterface $response */
-            $response = $next($request, $response);
+            $response = $handler->handle($request);
 
             return $response;
         }
         catch (\Throwable $e) {
             // Find if there is an exception handler for this type of exception
-            foreach ($this->exceptionMappers as $type => $exceptionCallable) {
+            foreach ($this->exceptionToResponseHandlerList as $type => $exceptionCallable) {
                 if ($e instanceof $type) {
-                    $exceptionResult = $exceptionCallable($e, $response, $request);
+                    $exceptionResult = $exceptionCallable($e, $request);
 
                     return Util::mapResult(
                         $exceptionResult,
-                        $response,
-                        $this->resultMappers
+                        $request,
+                        $this->stubResponseToPSR7ResponseHandlerList
                     );
                 }
             }

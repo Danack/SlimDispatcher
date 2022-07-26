@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace SlimAuryn;
 
 use Auryn\Injector;
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 /**
  * Class Util
@@ -16,19 +16,22 @@ class Util
 {
     public static function mapResult(
         mixed $result,
-        ResponseInterface $response,
-        array $resultMappers
-    ): ResponseInterface {
+        Request $request,
+//        Response $response,
+        array $stubResponseToPSR7ResponseHandlerList
+    ): Response {
         // Test each of the result mapper, and use an appropriate one.
-        foreach ($resultMappers as $type => $mapCallable) {
+        foreach ($stubResponseToPSR7ResponseHandlerList as $type => $mapCallable) {
             if ((is_object($result) && $result instanceof $type) ||
                 gettype($result) === $type) {
-                return $mapCallable($result, $response);
+                return $mapCallable($result, $request);
             }
         }
 
         // Allow PSR responses to just be passed back.
-        if ($result instanceof ResponseInterface) {
+        // This is after the responseHandlerList is processed, to
+        // allow custom handlers for specfic types to take precedence.
+        if ($result instanceof Response) {
             return $result;
         }
 
@@ -46,14 +49,11 @@ class Util
 
     public static function setInjectorInfo(
         Injector $injector,
-        ServerRequestInterface $request,
-        ResponseInterface $response,
+        Request $request,
         array $routeArguments
     ): void {
-        $injector->alias(ServerRequestInterface::class, get_class($request));
+        $injector->alias(Request::class, get_class($request));
         $injector->share($request);
-        $injector->alias(ResponseInterface::class, get_class($response));
-        $injector->share($response);
         foreach ($routeArguments as $key => $value) {
             $injector->defineParam($key, $value);
         }

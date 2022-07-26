@@ -2,9 +2,13 @@
 
 declare(strict_types=1);
 
+namespace SlimAurynTest\ResponseMapper;
+
 use SlimAurynTest\BaseTestCase;
 use SlimAuryn\ResponseMapper\TwigResponseMapper;
 use SlimAuryn\Response\TwigResponse;
+use Twig\Loader\FilesystemLoader;
+use Twig\Environment as TwigEnvironment;
 
 class TwigResponseMapperTest extends BaseTestCase
 {
@@ -18,8 +22,8 @@ class TwigResponseMapperTest extends BaseTestCase
             __DIR__ . '/../../templates'
         ];
 
-        $loader = new Twig_Loader_Filesystem($templatePaths);
-        $twig = new Twig_Environment($loader, array(
+        $loader = new FilesystemLoader($templatePaths);
+        $twig = new TwigEnvironment($loader, array(
             'cache' => false,
             'strict_variables' => true,
             'debug' => true
@@ -34,7 +38,7 @@ class TwigResponseMapperTest extends BaseTestCase
             ['x-foo' => 'bar']
         );
 
-        $originalResponse = new \Slim\Http\Response();
+        $originalResponse = createResponse();
         $response = $twigResponseMapper($twigResponse, $originalResponse);
         $this->assertSame($status, $response->getStatusCode());
 

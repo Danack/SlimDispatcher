@@ -6,6 +6,9 @@ namespace SlimAurynTest;
 
 use SlimAurynExample\SingleRouteWithMessageMiddleware;
 
+/**
+ * @group integration
+ */
 class IntegrationTest extends BaseTestCase
 {
     const INTERFACE_FOO_WAS_ALIASED_TO_STANDARD_FOO = 'Interface Foo was aliased to "StandardFoo".';

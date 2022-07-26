@@ -6,25 +6,25 @@ namespace SlimAuryn\ResponseMapper;
 
 use Psr\Http\Message\ResponseInterface;
 use SlimAuryn\Response\TwigResponse;
-use Twig_Environment as Twig;
+use Twig\Environment as TwigEnvironment;
 
 class TwigResponseMapper
 {
-    /** @var Twig */
+    /** @var TwigEnvironment */
     private $twig;
 
     /**
      * TwigResponseMapper constructor.
-     * @param Twig $twig
+     * @param TwigEnvironment $twig
      */
-    public function __construct(Twig $twig)
+    public function __construct(TwigEnvironment $twig)
     {
         $this->twig = $twig;
     }
 
     public function __invoke(
-        TwigResponse $twigResponse,
-        ResponseInterface $originalResponse
+        TwigResponse $twigResponse//,
+//        ResponseInterface $originalResponse
     ): ResponseInterface {
         $html = $this->twig->render(
             $twigResponse->getTemplateName(),
@@ -32,9 +32,14 @@ class TwigResponseMapper
         );
 
         $status = $twigResponse->getStatus();
-        $reasonPhrase = $this->getCustomReasonPhrase($status);
+//        $reasonPhrase = $this->getCustomReasonPhrase($status);
 
-        $response = $originalResponse->withStatus($status, $reasonPhrase);
+        $response = createResponse(
+            $twigResponse->getStatus(),
+            $this->getCustomReasonPhrase($status)
+        );//$originalResponse->withStatus($status, $reasonPhrase);
+
+
         foreach ($twigResponse->getHeaders() as $key => $value) {
             $response = $response->withAddedHeader($key, $value);
         }
