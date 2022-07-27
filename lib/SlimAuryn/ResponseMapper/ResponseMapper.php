@@ -3,6 +3,7 @@
 namespace SlimAuryn\ResponseMapper;
 
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use SlimAuryn\Response\StubResponse;
 
 /**
@@ -20,6 +21,7 @@ class ResponseMapper
      */
     public static function mapStubResponseToPsr7(
         StubResponse $builtResponse,
+        Request $request,
         ResponseInterface $response
     ) {
         $status = $builtResponse->getStatus();

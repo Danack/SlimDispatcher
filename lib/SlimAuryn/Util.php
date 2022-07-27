@@ -7,6 +7,7 @@ namespace SlimAuryn;
 use Auryn\Injector;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Laminas\Diactoros\Response as LaminasResponse;
 
 /**
  * Class Util
@@ -14,17 +15,33 @@ use Psr\Http\Message\ServerRequestInterface as Request;
  */
 class Util
 {
+
+    public static function mapResultWithNewResponse(
+        mixed $result,
+        Request $request,
+        array $stubResponseToPSR7ResponseHandlerList
+    ): Response
+    {
+        $response = new LaminasResponse();
+        return self::mapResult(
+            $result,
+            $request,
+            $response,
+            $stubResponseToPSR7ResponseHandlerList
+        );
+    }
+
     public static function mapResult(
         mixed $result,
         Request $request,
-//        Response $response,
+        Response $response,
         array $stubResponseToPSR7ResponseHandlerList
     ): Response {
         // Test each of the result mapper, and use an appropriate one.
         foreach ($stubResponseToPSR7ResponseHandlerList as $type => $mapCallable) {
             if ((is_object($result) && $result instanceof $type) ||
                 gettype($result) === $type) {
-                return $mapCallable($result, $request);
+                return $mapCallable($result, $request, $response);
             }
         }
 

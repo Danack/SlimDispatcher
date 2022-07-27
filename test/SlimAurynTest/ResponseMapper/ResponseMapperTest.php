@@ -32,6 +32,7 @@ class ResponseMapperTest extends BaseTestCase
 
         $responseReturned = ResponseMapper::mapStubResponseToPsr7(
             $textResponse,
+            $request,
             $originalResponse
         );
 
