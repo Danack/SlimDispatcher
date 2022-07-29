@@ -81,6 +81,7 @@ class ExceptionMiddleware implements MiddlewareInterface
                     return Util::mapResult(
                         $exceptionResult,
                         $request,
+                        createResponse(),
                         $this->stubResponseToPSR7ResponseHandlerList
                     );
                 }

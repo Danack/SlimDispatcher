@@ -206,6 +206,10 @@ function setupRoutes(App $app)
 }
 
 
+/*
+ * TODO - replace with a response factory everywhere
+ * this is used.
+ */
 function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
 {
     $responseFactory = new ResponseFactory();

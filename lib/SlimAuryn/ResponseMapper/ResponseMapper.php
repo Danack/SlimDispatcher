@@ -62,7 +62,8 @@ class ResponseMapper
         ResponseInterface $controllerResult,
         ResponseInterface $originalResponse
     ) {
-        // TODO - this may be bad. Should we copy
+        // TODO - this may be bad. Should we copy things across?
+        // Maybe something could be set in the headers?
         return $controllerResult;
     }
 }

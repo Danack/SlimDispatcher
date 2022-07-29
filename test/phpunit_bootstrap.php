@@ -13,13 +13,6 @@ use Psr\Http\Message\ResponseInterface;
 
 function createRequestForTesting() : ServerRequest
 {
-//    $request = new Request(
-//        'https://user:pass@host:443/path?query',
-//        $method = 'GET',
-//        $headers = [],
-//        $serverParams = []
-//    );
-
     $request = new ServerRequest(
         $serverParams = [],
         $uploadedFiles = [],
@@ -36,10 +29,3 @@ function createRequestForTesting() : ServerRequest
 
     return $request;
 }
-
-
-//function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
-//{
-//    $responseFactory = new ResponseFactory();
-//    return $responseFactory->createResponse($code, $reasonPhrase);
-//}

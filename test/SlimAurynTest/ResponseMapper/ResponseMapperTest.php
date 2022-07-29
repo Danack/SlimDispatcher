@@ -20,8 +20,6 @@ class ResponseMapperTest extends BaseTestCase
      */
     public function testMapStubResponseToPsr7()
     {
-        $originalResponse = createResponse();
-
         $text = 'This is some text';
         $headers = [
             'foo' => 'bar'
@@ -32,8 +30,8 @@ class ResponseMapperTest extends BaseTestCase
 
         $responseReturned = ResponseMapper::mapStubResponseToPsr7(
             $textResponse,
-            $request,
-            $originalResponse
+            $request = createRequestForTesting(),
+            $originalResponse = createResponse()
         );
 
         $this->assertSame($status, $responseReturned->getStatusCode());
@@ -70,6 +68,7 @@ class ResponseMapperTest extends BaseTestCase
 
         $responseReturned = ResponseMapper::mapStubResponseToPsr7(
             $textResponse,
+            $request = createRequestForTesting(),
             $originalResponse
         );
 
@@ -102,6 +101,7 @@ class ResponseMapperTest extends BaseTestCase
 
         ResponseMapper::mapStubResponseToPsr7(
             $textResponse,
+            $request = createRequestForTesting(),
             $originalResponse
         );
     }
@@ -111,14 +111,16 @@ class ResponseMapperTest extends BaseTestCase
      */
     public function testPassThrough()
     {
-//        $originalResponse = createResponse();
+        $originalResponse = createResponse();
         $controllerResponse = createResponse();
 
         $responseReturned = ResponseMapper::passThroughResponse(
             $controllerResponse,
-//            $originalResponse
+            $originalResponse
         );
 
         $this->assertSame($controllerResponse, $responseReturned);
+        // TODO - we should allow users to define a response copier
+        // So that they can copy certain headers across. Maybe.
     }
 }
