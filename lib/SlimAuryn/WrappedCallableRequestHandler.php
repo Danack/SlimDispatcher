@@ -11,9 +11,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 class WrappedCallableRequestHandler implements RequestHandlerInterface
 {
     /**
-     * @param $fn callable
+     * @param mixed $fn Can't be callable as Auryn supports 'classname::method'
      */
-    public function __construct(private /*callable*/ $fn)
+    public function __construct(private mixed /*callable*/ $fn)
     {
     }
 
