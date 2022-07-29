@@ -13,4 +13,3 @@ return [
 
     ['/', 'GET', 'SlimAurynExample\ResponseController::getHomePage'],
 ];
-

@@ -6,6 +6,7 @@ namespace SlimAurynTest;
 
 use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface;
+
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
@@ -17,22 +18,45 @@ use SlimAuryn\ExceptionMiddleware;
 class ExceptionMiddlewareTest extends BaseTestCase
 {
     // This can't be tested like this.
-//    public function testCallableCalledProperly()
-//    {
-//        $nextFn = function (Request $request, ResponseInterface $response) {
-//            return 'Test output';
-//        };
-//
-//
-//        $responseString = $this->invokeMiddleware(
-//            $nextFn,
-//            [],
-//            []
-//        );
-//
-//
-//        $this->assertEquals('Test output', $responseString);
-//    }
+    public function testCallableCalledProperly()
+    {
+        $text = "I was called";
+
+        $requestHandler = new class ($text) implements RequestHandler {
+
+            public bool $was_called = false;
+            private string $text_response;
+
+            public function __construct($text)
+            {
+                $this->text_response = $text;
+            }
+
+            public function handle(ServerRequestInterface $request): ResponseInterface
+            {
+                $this->was_called = true;
+                $response = createResponse();
+
+                $stream = $response->getBody();
+                $stream->rewind();
+                $stream->write($this->text_response);
+
+//                $response = $response->withBody();
+                return $response;
+            }
+        };
+
+        $responseReturned = $this->processMiddleware(
+            $requestHandler,
+            [],
+            []
+        );
+
+        $this->assertTrue($requestHandler->was_called);
+
+        $responseReturned->getBody()->rewind();
+        $this->assertSame($text, $responseReturned->getBody()->getContents());
+    }
 
 
     public function testParseErrorMappedProperly()

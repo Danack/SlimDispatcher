@@ -24,7 +24,7 @@ class TwigResponseMapper
 
     public function __invoke(
         TwigResponse $twigResponse//,
-//        ResponseInterface $originalResponse
+        //        ResponseInterface $originalResponse
     ): ResponseInterface {
         $html = $this->twig->render(
             $twigResponse->getTemplateName(),

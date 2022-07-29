@@ -29,3 +29,9 @@ function createRequestForTesting() : ServerRequest
 
     return $request;
 }
+
+
+function functionCallableForAurynCallableResolverTest()
+{
+    return "I was called";
+}

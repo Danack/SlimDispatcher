@@ -17,7 +17,6 @@ class AllRoutesMiddleware implements MiddlewareInterface
     public function process(
         Request $request,
         RequestHandlerInterface $handler
-
     ): ResponseInterface {
         $response = $handler->handle($request);
 

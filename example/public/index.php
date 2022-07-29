@@ -45,7 +45,7 @@ $callableResolver = new AurynCallableResolver(
 //$container['callableResolver'] = $callableResolver;
 
 $app = new \Slim\App(
-    /* ResponseFactoryInterface */ $responseFactory = new ResponseFactory(),
+    /* ResponseFactoryInterface */    $responseFactory = new ResponseFactory(),
     /* ?ContainerInterface */ $container = null,
     /* ?CallableResolverInterface */ $callableResolver,
     /* ?RouteCollectorInterface */ $routeCollector = null,

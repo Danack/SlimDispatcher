@@ -20,8 +20,7 @@ class Util
         mixed $result,
         Request $request,
         array $stubResponseToPSR7ResponseHandlerList
-    ): Response
-    {
+    ): Response {
         $response = new LaminasResponse();
         return self::mapResult(
             $result,
@@ -58,7 +57,7 @@ class Util
             $type = "object of type ". get_class($result);
         }
         $message = sprintf(
-            'Dispatched function returned [%s] which is not a type known to the resultMappers.',
+            'Resolved callable returned [%s] which is not a type known to the resultMappers.',
             $type
         );
         throw new SlimAurynException($message);

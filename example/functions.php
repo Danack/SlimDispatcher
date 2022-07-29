@@ -128,7 +128,7 @@ function convertStringToHtmlResponse(
 
 function psr7ResponsePassThrough(
     ResponseInterface $controllerResult//,
-//    ResponseInterface $originalResponse
+    //    ResponseInterface $originalResponse
 ): ResponseInterface {
     return $controllerResult;
 }
@@ -136,7 +136,7 @@ function psr7ResponsePassThrough(
 
 function mapToPsr7Response(
     StubResponse $builtResponse,
-//    ResponseInterface $response
+    //    ResponseInterface $response
 ): ResponseInterface {
 
     $response = createResponse();
