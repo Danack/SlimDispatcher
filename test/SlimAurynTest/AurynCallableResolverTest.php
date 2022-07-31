@@ -111,6 +111,7 @@ class AurynCallableResolverTest extends BaseTestCase
         );
 
         $this->expectException(UnresolvableCallableException::class);
+        // TODO - exception message need checking
         $callableResolver->resolve($alleged_callable);
     }
 }

@@ -10,9 +10,17 @@ use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use SlimAuryn\Util;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseFactoryInterface as ResponseFactory;
 
+/** 
+ * You probably shouldn't use this class.
+ *
+ * you should configure your own that does the needful 
+ */
 class ExceptionMiddleware implements MiddlewareInterface
 {
+    private ResponseFactory $requestFactory;
+
     /**
      *
      * @var array[{0:class-string, 1:callable}]
@@ -53,9 +61,11 @@ class ExceptionMiddleware implements MiddlewareInterface
      * @param $stubResponseToPSR7ResponseHandlerList
      */
     public function __construct(
+        ResponseFactory $requestFactory,
         array $exceptionToResponseHandlerList,
         array $stubResponseToPSR7ResponseHandlerList
     ) {
+        $this->requestFactory = $requestFactory;
         $this->exceptionToResponseHandlerList = $exceptionToResponseHandlerList;
         $this->stubResponseToPSR7ResponseHandlerList = $stubResponseToPSR7ResponseHandlerList;
     }
@@ -65,30 +75,44 @@ class ExceptionMiddleware implements MiddlewareInterface
      * @param RequestHandler $handler
      * @return Response
      */
-    public function process(Request $request, RequestHandler $handler): Response
-    {
+    public function process(
+        Request $request,
+        RequestHandler $handler
+    ): Response {
         try {
             $response = $handler->handle($request);
 
             return $response;
-        }
-        catch (\Throwable $e) {
-            // Find if there is an exception handler for this type of exception
-            foreach ($this->exceptionToResponseHandlerList as $type => $exceptionCallable) {
-                if ($e instanceof $type) {
-                    $exceptionResult = $exceptionCallable($e, $request);
+        } catch (\Throwable $e) {
 
-                    return Util::mapResult(
-                        $exceptionResult,
-                        $request,
-                        createResponse(),
-                        $this->stubResponseToPSR7ResponseHandlerList
-                    );
-                }
+            $response = $this->convertExceptionToResponse($e);
+
+            if ($response !== null) {
+                return $response;
             }
+
             // No exception handler for this exception type, so rethrow the
             // exception to allow it to propagate up the stack.
             throw $e;
         }
     }
+
+    private function exceptionToResponseConverter($e)
+    {
+        // Find if there is an exception handler for this type of exception
+        foreach ($this->exceptionToResponseHandlerList as $type => $exceptionCallable) {
+            if ($e instanceof $type) {
+                $exceptionResult = $exceptionCallable($e, $request);
+
+                return Util::mapResult(
+                    $exceptionResult,
+                    $request,
+                    $this->requestFactory->createResponse(),
+                    $this->stubResponseToPSR7ResponseHandlerList,
+                    $injector
+                );
+            }
+        }
+    }
+
 }

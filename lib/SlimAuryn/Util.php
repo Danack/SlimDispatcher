@@ -30,17 +30,20 @@ class Util
         );
     }
 
+    // TODO - convert this into it's own class.
     public static function mapResult(
         mixed $result,
         Request $request,
         Response $response,
-        array $stubResponseToPSR7ResponseHandlerList
+        array $stubResponseToPSR7ResponseHandlerList,
+        Injector $injector
     ): Response {
         // Test each of the result mapper, and use an appropriate one.
         foreach ($stubResponseToPSR7ResponseHandlerList as $type => $mapCallable) {
             if ((is_object($result) && $result instanceof $type) ||
                 gettype($result) === $type) {
-                return $mapCallable($result, $request, $response);
+
+                return $injector->execute($mapCallable, [$result, $request, $response]);
             }
         }
 

@@ -36,7 +36,8 @@ class AurynCallableResolver implements CallableResolverInterface
                 $result,
                 $request,
                 $response,
-                $this->resultMappers
+                $this->resultMappers,
+                $this->injector
             );
         };
 
@@ -58,7 +59,6 @@ class AurynCallableResolver implements CallableResolverInterface
      */
     public function resolve($toResolve): callable
     {
-
         if ($toResolve instanceof \Closure) {
             return $this->wrapCallableWithResultMappers($toResolve);
         }

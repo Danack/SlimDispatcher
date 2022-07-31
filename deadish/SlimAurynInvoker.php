@@ -60,7 +60,8 @@ class SlimAurynInvoker
             return Util::mapResult(
                 $result,
                 $request,
-                $this->resultMappers
+                $this->resultMappers,
+                $this->injector
             );
         };
 
