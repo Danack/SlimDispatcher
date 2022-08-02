@@ -5,7 +5,10 @@ declare(strict_types = 1);
 namespace SlimAuryn;
 
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use SlimAuryn\Response\StubResponse;
 
 // Define a function that writes a string into the response object.
@@ -73,3 +76,24 @@ function passThroughResponse(
     return $controllerResult;
 }
 
+
+function wrapCurrentMiddleWare(
+    MiddlewareInterface $middleware,
+    RequestHandlerInterface $requestHandler
+): callable {
+    $fn = function (ServerRequestInterface $req) use (
+        $middleware,
+        $requestHandler
+    ) {
+        $response = $middleware->process($req, $requestHandler);
+//        if ($response instanceof ResponseInterface === false) {
+//            throw new UnexpectedValueException(
+//                'Middleware must return instance of \Psr\Http\Message\ResponseInterface'
+//            );
+//        }
+
+        return $response;
+    };
+
+    return $fn;
+}

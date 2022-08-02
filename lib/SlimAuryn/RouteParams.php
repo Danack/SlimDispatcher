@@ -8,13 +8,11 @@ namespace SlimAuryn;
  */
 class RouteParams
 {
-    private $args;
-
     /**
      * RouteParams constructor.
      * @param array $args
      */
-    public function __construct(array $args)
+    public function __construct(private array $args)
     {
         $this->args = $args;
     }

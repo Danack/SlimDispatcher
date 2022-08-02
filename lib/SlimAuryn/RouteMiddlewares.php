@@ -12,26 +12,7 @@ use UnexpectedValueException;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-function wrapCurrentMiddleWare(
-    MiddlewareInterface $middleware,
-    RequestHandlerInterface $requestHandler
-) {
-    $fn = function (ServerRequestInterface $req) use (
-        $middleware,
-        $requestHandler
-    ) {
-        $response = $middleware->process($req, $requestHandler);
-//        if ($response instanceof ResponseInterface === false) {
-//            throw new UnexpectedValueException(
-//                'Middleware must return instance of \Psr\Http\Message\ResponseInterface'
-//            );
-//        }
 
-        return $response;
-    };
-
-    return $fn;
-}
 
 class RouteMiddlewares
 {
@@ -66,8 +47,7 @@ class RouteMiddlewares
 
         $result = call_user_func(
             $currentCallable,
-            $request //,
-            //$response
+            $request
         );
 
         if ($result instanceof ResponseInterface === false) {
