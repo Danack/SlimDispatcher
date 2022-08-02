@@ -35,23 +35,24 @@ class RouteMiddlewaresTest extends BaseTestCase
     }
 
 
-    public function testBadReturnGivesExceptionWithMiddleware()
-    {
-        $this->markTestSkipped("type checking forbids this.");
-        $routeMiddlewares = new RouteMiddlewares();
-        $routeMiddlewares->addMiddleware(new NullMiddleware());
-
-        $request = createRequestForTesting();
-
-        $fn = function (ServerRequestInterface $request/*, ResponseInterface $response*/) {
-            return 'hello world';
-        };
-
-        $this->expectException(UnexpectedValueException::class);
-        $this->expectExceptionMessage('Middleware must return instance of \Psr\Http\Message\ResponseInterface');
-
-        $routeMiddlewares->execute($fn, $request/*, $response*/);
-    }
+    // TODO - delete this after coverage is 100%
+//    public function testBadReturnGivesExceptionWithMiddleware()
+//    {
+//        $this->markTestSkipped("type checking forbids this.");
+//        $routeMiddlewares = new RouteMiddlewares();
+//        $routeMiddlewares->addMiddleware(new NullMiddleware());
+//
+//        $request = createRequestForTesting();
+//
+//        $fn = function (ServerRequestInterface $request/*, ResponseInterface $response*/) {
+//            return 'hello world';
+//        };
+//
+//        $this->expectException(UnexpectedValueException::class);
+//        $this->expectExceptionMessage('Middleware must return instance of \Psr\Http\Message\ResponseInterface');
+//
+//        $routeMiddlewares->execute($fn, $request/*, $response*/);
+//    }
 
     /**
      * @group wip2

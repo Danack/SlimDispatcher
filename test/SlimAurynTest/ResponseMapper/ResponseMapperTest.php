@@ -82,29 +82,30 @@ class ResponseMapperTest extends BaseTestCase
         $this->assertSame($customReasonPhrase, $responseReturned->getReasonPhrase());
     }
 
-    public function testMapStubResponseToPsr7WithUnknownCustomStatusCodeThrowsException()
-    {
-        $this->markTestSkipped("apparently this isn't needed.");
-        $customStatusCode = 550;
-        $text = 'This is some text';
-        $headers = [
-            'foo' => 'bar'
-        ];
-
-        $textResponse = new TextResponse($text, $headers, $customStatusCode);
-
-        $originalResponse = createResponse();
-
-        // This makes me sad.
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('ReasonPhrase must be supplied for this code');
-
-        ResponseMapper::mapStubResponseToPsr7(
-            $textResponse,
-            $request = createRequestForTesting(),
-            $originalResponse
-        );
-    }
+    // TODO - delete after test coverage is 100%
+//    public function testMapStubResponseToPsr7WithUnknownCustomStatusCodeThrowsException()
+//    {
+//        $this->markTestSkipped("apparently this isn't needed.");
+//        $customStatusCode = 550;
+//        $text = 'This is some text';
+//        $headers = [
+//            'foo' => 'bar'
+//        ];
+//
+//        $textResponse = new TextResponse($text, $headers, $customStatusCode);
+//
+//        $originalResponse = createResponse();
+//
+//        // This makes me sad.
+//        $this->expectException(\InvalidArgumentException::class);
+//        $this->expectExceptionMessage('ReasonPhrase must be supplied for this code');
+//
+//        ResponseMapper::mapStubResponseToPsr7(
+//            $textResponse,
+//            $request = createRequestForTesting(),
+//            $originalResponse
+//        );
+//    }
 
     /**
      * @covers \SlimAuryn\ResponseMapper\ResponseMapper::passThroughResponse

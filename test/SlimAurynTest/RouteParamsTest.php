@@ -28,5 +28,9 @@ class RouteParamsTest extends BaseTestCase
 
         $routeParams = new RouteParams($data);
         $this->assertSame($data, $routeParams->getAll());
+
+        $this->assertFalse($routeParams->hasValue('unknown_key'));
+        $this->assertTrue($routeParams->hasValue('quux'));
+        $this->assertSame('123', $routeParams->getValue('quux'));
     }
 }

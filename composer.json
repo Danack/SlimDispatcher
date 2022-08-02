@@ -30,7 +30,10 @@
     "autoload": {
         "psr-0": {
           "SlimAuryn\\": "lib/"
-        }
+        },
+        "files": [
+          "lib/SlimAuryn/functions.php"
+        ]
     },
     "autoload-dev": {
         "psr-0": {

@@ -28,8 +28,6 @@ class AurynCallableResolver implements CallableResolverInterface
         ) use ($resolvedCallable) {
 
             $injector = $this->injector;
-
-//            Util::setInjectorInfo($this->injector, $request, $routeArguments);
 //            // TODO - we could share $response
             $injector->alias(Request::class, get_class($request));
             $injector->share($request);
@@ -42,7 +40,6 @@ class AurynCallableResolver implements CallableResolverInterface
 
             $result = $injector->execute($resolvedCallable);
 
-
             return $this->convertStubResponseToFullResponse(
                 $result,
                 $request,
@@ -53,7 +50,7 @@ class AurynCallableResolver implements CallableResolverInterface
         return $fn;
     }
 
-    function convertStubResponseToFullResponse(
+    private function convertStubResponseToFullResponse(
         mixed $result,
         Request $request,
         Response $response
@@ -62,7 +59,6 @@ class AurynCallableResolver implements CallableResolverInterface
         foreach ($this->resultMappers as $type => $mapCallable) {
             if ((is_object($result) && $result instanceof $type) ||
                 gettype($result) === $type) {
-
                 return $this->injector->execute($mapCallable, [$result, $request, $response]);
             }
         }
