@@ -16,6 +16,7 @@ class ResponseMapper
      * Extract the status, headers and body from a StubResponse and
      * set the values on the PSR7 response
      * @param StubResponse $builtResponse
+     * @param Request $request
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
@@ -47,7 +48,6 @@ class ResponseMapper
         if (array_key_exists($status, $customPhrases) === true) {
             return $customPhrases[$status];
         }
-
 
         return '';
     }

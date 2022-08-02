@@ -11,10 +11,9 @@
         }
     ],
     "require": {
-        "php": ">=7.1.0",
+        "php": ">=8.0.0",
         "rdlowrey/auryn": "^1.4.2"
     },
-
     "require-dev": {
       "erusev/parsedown": "^1.7",
       "mockery/mockery": "^1.2.0",

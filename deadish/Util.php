@@ -16,19 +16,19 @@ use Laminas\Diactoros\Response as LaminasResponse;
 class Util
 {
 
-    public static function mapResultWithNewResponse(
-        mixed $result,
-        Request $request,
-        array $stubResponseToPSR7ResponseHandlerList
-    ): Response {
-        $response = new LaminasResponse();
-        return self::mapResult(
-            $result,
-            $request,
-            $response,
-            $stubResponseToPSR7ResponseHandlerList
-        );
-    }
+//    public static function mapResultWithNewResponse(
+//        mixed $result,
+//        Request $request,
+//        array $stubResponseToPSR7ResponseHandlerList
+//    ): Response {
+//        $response = new LaminasResponse();
+//        return self::mapResult(
+//            $result,
+//            $request,
+//            $response,
+//            $stubResponseToPSR7ResponseHandlerList
+//        );
+//    }
 
     // TODO - convert this into it's own class.
     public static function mapResult(

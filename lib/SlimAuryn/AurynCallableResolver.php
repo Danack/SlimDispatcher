@@ -27,21 +27,63 @@ class AurynCallableResolver implements CallableResolverInterface
             array $routeArguments
         ) use ($resolvedCallable) {
 
-            Util::setInjectorInfo($this->injector, $request, $routeArguments);
-            // TODO - we could share $response
+            $injector = $this->injector;
 
-            $result = $this->injector->execute($resolvedCallable);
+//            Util::setInjectorInfo($this->injector, $request, $routeArguments);
+//            // TODO - we could share $response
+            $injector->alias(Request::class, get_class($request));
+            $injector->share($request);
+            foreach ($routeArguments as $key => $value) {
+                $injector->defineParam($key, $value);
+            }
 
-            return Util::mapResult(
+            $routeParams = new RouteParams($routeArguments);
+            $injector->share($routeParams);
+
+            $result = $injector->execute($resolvedCallable);
+
+
+            return $this->convertStubResponseToFullResponse(
                 $result,
                 $request,
-                $response,
-                $this->resultMappers,
-                $this->injector
+                $response
             );
         };
 
         return $fn;
+    }
+
+    function convertStubResponseToFullResponse(
+        mixed $result,
+        Request $request,
+        Response $response
+    ): Response {
+        // Test each of the result mapper, and use an appropriate one.
+        foreach ($this->resultMappers as $type => $mapCallable) {
+            if ((is_object($result) && $result instanceof $type) ||
+                gettype($result) === $type) {
+
+                return $this->injector->execute($mapCallable, [$result, $request, $response]);
+            }
+        }
+
+        // Allow PSR responses to just be passed back.
+        // This is after the responseHandlerList is processed, to
+        // allow custom handlers for specfic types to take precedence.
+        if ($result instanceof Response) {
+            return $result;
+        }
+
+        // Unknown result type, throw an exception
+        $type = gettype($result);
+        if ($type === "object") {
+            $type = "object of type ". get_class($result);
+        }
+        $message = sprintf(
+            'Resolved callable returned [%s] which is not a type known to the resultMappers.',
+            $type
+        );
+        throw new SlimAurynException($message);
     }
 
     /**

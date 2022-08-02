@@ -61,11 +61,11 @@ class ExceptionMiddleware implements MiddlewareInterface
      * @param $stubResponseToPSR7ResponseHandlerList
      */
     public function __construct(
-        ResponseFactory $requestFactory,
+        ResponseFactory $responseFactory,
         array $exceptionToResponseHandlerList,
         array $stubResponseToPSR7ResponseHandlerList
     ) {
-        $this->requestFactory = $requestFactory;
+        $this->requestFactory = $responseFactory;
         $this->exceptionToResponseHandlerList = $exceptionToResponseHandlerList;
         $this->stubResponseToPSR7ResponseHandlerList = $stubResponseToPSR7ResponseHandlerList;
     }

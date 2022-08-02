@@ -4,3 +4,4 @@ set -e
 set -x
 
 php vendor/bin/phpunit -c test/phpunit.xml "$@"
+

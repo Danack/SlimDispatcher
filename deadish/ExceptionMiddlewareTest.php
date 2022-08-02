@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SlimAurynTest;
 
+use Laminas\Diactoros\ResponseFactory;
 use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface;
 
@@ -257,6 +258,7 @@ class ExceptionMiddlewareTest extends BaseTestCase
         $request = createRequestForTesting();
 
         $exceptionMiddleware = new ExceptionMiddleware(
+            new ResponseFactory(),
             $exceptionHandlers,
             $resultMappers
         );
