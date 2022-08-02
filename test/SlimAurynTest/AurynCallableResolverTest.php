@@ -11,6 +11,7 @@ use SlimAuryn\AurynCallableResolver;
 use SlimAurynTest\ExampleCallableClass;
 use SlimAurynTest\ExampleInvokableClass;
 use SlimAuryn\Exception\UnresolvableCallableException;
+use SlimAuryn\SlimAurynException;
 use function SlimAuryn\convertStringToHtmlResponse;
 
 
@@ -24,10 +25,12 @@ class AurynCallableResolverTest extends BaseTestCase
         $anonymous_fn = function () {
             return "I was called";
         };
+
+
         $class_with_method_instance = new ExampleCallableClass();
         $class_with_invoke_instance = new ExampleInvokableClass();
 
-        // anonymous function - done.
+        // anonymous function
         yield [$anonymous_fn];
 
         // Class with method
@@ -89,6 +92,39 @@ class AurynCallableResolverTest extends BaseTestCase
         );
     }
 
+    /**
+     * @covers \SlimAuryn\AurynCallableResolver::convertStubResponseToFullResponse
+     */
+    public function testCoversPSR7ResponsePassThrough()
+    {
+        $custom_status = 301;
+
+        $anonymous_fn_that_returns_response = function () use ($custom_status) {
+            return createResponse($custom_status);
+        };
+
+        $injector = new Injector();
+
+        $callableResolver = new AurynCallableResolver(
+            $injector,
+            []
+        );
+
+        $resolved_callable = $callableResolver->resolve($anonymous_fn_that_returns_response);
+        $this->assertIsCallable($resolved_callable);
+
+        $full_response = $resolved_callable(
+            $request = createRequestForTesting(),
+            $response = createResponse(),
+            $route_arguments = [],
+        );
+
+        $this->assertInstanceOf(Response::class, $full_response);
+
+        /** @var Response $full_response */
+        $this->assertSame($custom_status, $full_response->getStatusCode());
+    }
+
     public function providesCallableResolveFunctionErrors()
     {
         yield ['this_function_doesnt_exist'];
@@ -113,5 +149,85 @@ class AurynCallableResolverTest extends BaseTestCase
         $this->expectException(UnresolvableCallableException::class);
         // TODO - exception message need checking
         $callableResolver->resolve($alleged_callable);
+    }
+
+
+
+
+    /**
+     * @covers \SlimAuryn\AurynCallableResolver
+     */
+    public function testCallableReturnsBadType()
+    {
+        $fn = function () {
+            return new \StdClass();
+        };
+
+        $injector = new Injector();
+
+        $callableResolver = new AurynCallableResolver(
+            $injector,
+            []
+        );
+
+        $fn = $callableResolver->resolve($fn);
+
+        $this->expectException(SlimAurynException::class);
+        $this->expectExceptionMessageMatchesTemplateString(
+            SlimAurynException::UNKNOWN_RESULT_TYPE
+        );
+
+        $fn(
+          $request = createRequestForTesting(),
+          $response = createResponse(),
+          $routeArguments = []
+        );
+    }
+
+
+
+    /**
+     * @covers \SlimAuryn\AurynCallableResolver
+     */
+    public function testCallableNeedsARouteParameter()
+    {
+        $fn = function (string $name) {
+            return "Hello there $name";
+        };
+
+        $injector = new Injector();
+
+        $stub_response_mappers = [
+            'string' => 'convertStringToHtmlResponse'
+        ];
+
+        $callableResolver = new AurynCallableResolver(
+            $injector,
+            $stub_response_mappers
+        );
+
+        $fn = $callableResolver->resolve($fn);
+
+        $routeArguments = [
+            'name' => 'John'
+        ];
+
+        $full_response = $fn(
+            $request = createRequestForTesting(),
+            $response = createResponse(),
+            $routeArguments
+        );
+
+        $this->assertInstanceOf(Response::class, $full_response);
+
+        /** @var $full_response Response::class */
+        $body_stream = $full_response->getBody();
+        $body_stream->rewind();
+        $full_contents = $body_stream->getContents();
+
+        $this->assertSame(
+            "Hello there John",
+            $full_contents
+        );
     }
 }

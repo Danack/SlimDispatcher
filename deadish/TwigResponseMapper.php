@@ -23,8 +23,7 @@ class TwigResponseMapper
     }
 
     public function __invoke(
-        TwigResponse $twigResponse//,
-        //        ResponseInterface $originalResponse
+        TwigResponse $twigResponse
     ): ResponseInterface {
         $html = $this->twig->render(
             $twigResponse->getTemplateName(),
@@ -32,13 +31,11 @@ class TwigResponseMapper
         );
 
         $status = $twigResponse->getStatus();
-//        $reasonPhrase = $this->getCustomReasonPhrase($status);
 
         $response = createResponse(
             $twigResponse->getStatus(),
             $this->getCustomReasonPhrase($status)
-        );//$originalResponse->withStatus($status, $reasonPhrase);
-
+        );
 
         foreach ($twigResponse->getHeaders() as $key => $value) {
             $response = $response->withAddedHeader($key, $value);

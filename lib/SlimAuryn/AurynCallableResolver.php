@@ -70,16 +70,8 @@ class AurynCallableResolver implements CallableResolverInterface
             return $result;
         }
 
-        // Unknown result type, throw an exception
-        $type = gettype($result);
-        if ($type === "object") {
-            $type = "object of type ". get_class($result);
-        }
-        $message = sprintf(
-            'Resolved callable returned [%s] which is not a type known to the resultMappers.',
-            $type
-        );
-        throw new SlimAurynException($message);
+
+        throw SlimAurynException::unknownResultType($result);
     }
 
     /**

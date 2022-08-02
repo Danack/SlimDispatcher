@@ -3,6 +3,7 @@
 namespace SlimAurynTest;
 
 use PHPUnit\Framework\TestCase;
+use Danack\PHPUnitHelper\StringTemplateMatching;
 
 /**
  * Class TestBase
@@ -12,6 +13,8 @@ use PHPUnit\Framework\TestCase;
  */
 class BaseTestCase extends TestCase
 {
+    use StringTemplateMatching;
+
     private $startLevel = null;
 
     public function setup(): void
