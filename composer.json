@@ -1,5 +1,5 @@
 {
-    "name": "danack/slim-invoker",
+    "name": "danack/slim-dispatcher",
     "type": "library",
     "description": "Allows route callables to be dispatched by a supplied invoker",
     "keywords": ["auryn", "di"],
