@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SlimAuryn\Response;
+namespace SlimDispatcher\Response;
 
 class TwigResponse
 {

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace SlimAurynTest;
 
 use Auryn\Injector;
-use SlimAuryn\InjectionParams;
+use SlimDispatcher\InjectionParams;
 use Mockery;
 
 

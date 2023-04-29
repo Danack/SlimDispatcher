@@ -2,14 +2,14 @@
 
 namespace SlimAurynTest;
 
-use SlimAuryn\Response\TextResponse;
+use SlimDispatcher\Response\TextResponse;
 use SlimAurynTest\BaseTestCase;
-use SlimAuryn\RouteParams;
-use SlimAuryn\RouteParamsException;
-use function SlimAuryn\convertStringToHtmlResponse;
-use function SlimAuryn\mapStubResponseToPsr7;
-use function SlimAuryn\passThroughResponse;
-use function SlimAuryn\getReasonPhrase;
+use SlimDispatcher\RouteParams;
+use SlimDispatcher\RouteParamsException;
+use function SlimDispatcher\convertStringToHtmlResponse;
+use function SlimDispatcher\mapStubResponseToPsr7;
+use function SlimDispatcher\passThroughResponse;
+use function SlimDispatcher\getReasonPhrase;
 
 /**
  * @coversNothing

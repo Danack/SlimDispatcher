@@ -2,7 +2,7 @@
 
 namespace SlimAurynTest\Response;
 
-use SlimAuryn\Response\RedirectResponse;
+use SlimDispatcher\Response\RedirectResponse;
 use SlimAurynTest\BaseTestCase;
 
 class RedirectResponseTest extends BaseTestCase

@@ -1,9 +1,9 @@
 <?php
 
-namespace SlimAuryn\Response;
+namespace SlimDispatcher\Response;
 
-use SlimAuryn\Response\StubResponse;
-use SlimAuryn\Response\InvalidDataException;
+use SlimDispatcher\Response\StubResponse;
+use SlimDispatcher\Response\InvalidDataException;
 
 class JsonResponse implements StubResponse
 {
@@ -28,7 +28,7 @@ class JsonResponse implements StubResponse
      * @param mixed $data
      * @param array $headers
      * @param int $status
-     * @throws \SlimAuryn\Response\InvalidDataException
+     * @throws \SlimDispatcher\Response\InvalidDataException
      */
     public function __construct($data, array $headers = [], int $status = 200)
     {

@@ -2,7 +2,7 @@
 
 namespace SlimAurynTest\Response;
 
-use SlimAuryn\Response\HtmlNoCacheResponse;
+use SlimDispatcher\Response\HtmlNoCacheResponse;
 use SlimAurynTest\BaseTestCase;
 
 class HtmlNoCacheResponseTest extends BaseTestCase

@@ -2,7 +2,7 @@
 
 namespace SlimAurynTest\Response;
 
-use SlimAuryn\Response\TwigResponse;
+use SlimDispatcher\Response\TwigResponse;
 use SlimAurynTest\BaseTestCase;
 
 class TwigResponseTest extends BaseTestCase

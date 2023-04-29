@@ -1,6 +1,6 @@
 <?php
 
-namespace SlimAuryn;
+namespace SlimDispatcher;
 
 /**
  * Class RouteParams - contains all of the parameters that were present in the matched route

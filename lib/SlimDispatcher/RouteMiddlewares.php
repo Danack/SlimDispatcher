@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace SlimAuryn;
+namespace SlimDispatcher;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

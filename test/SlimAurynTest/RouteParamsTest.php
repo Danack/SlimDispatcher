@@ -3,12 +3,12 @@
 namespace SlimAurynTest;
 
 use SlimAurynTest\BaseTestCase;
-use SlimAuryn\RouteParams;
-use SlimAuryn\RouteParamsException;
+use SlimDispatcher\RouteParams;
+use SlimDispatcher\RouteParamsException;
 
 
 /**
- * @covers \SlimAuryn\RouteParams
+ * @covers \SlimDispatcher\RouteParams
  */
 class RouteParamsTest extends BaseTestCase
 {

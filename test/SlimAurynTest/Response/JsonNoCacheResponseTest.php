@@ -2,9 +2,9 @@
 
 namespace SlimAurynTest\Response;
 
-use SlimAuryn\Response\JsonNoCacheResponse;
+use SlimDispatcher\Response\JsonNoCacheResponse;
 use SlimAurynTest\BaseTestCase;
-use SlimAuryn\Response\InvalidDataException;
+use SlimDispatcher\Response\InvalidDataException;
 
 
 class JsonNoCacheResponseTest extends BaseTestCase

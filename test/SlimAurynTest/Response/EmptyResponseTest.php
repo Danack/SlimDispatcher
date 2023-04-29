@@ -2,7 +2,7 @@
 
 namespace SlimAurynTest\Response;
 
-use SlimAuryn\Response\EmptyResponse;
+use SlimDispatcher\Response\EmptyResponse;
 use SlimAurynTest\BaseTestCase;
 
 class EmptyResponseTest extends BaseTestCase

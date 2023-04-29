@@ -7,12 +7,12 @@ namespace SlimAurynTest;
 use Auryn\Injector;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-use SlimAuryn\AurynCallableResolver;
+use SlimDispatcher\AurynCallableResolver;
 use SlimAurynTest\ExampleCallableClass;
 use SlimAurynTest\ExampleInvokableClass;
-use SlimAuryn\Exception\UnresolvableCallableException;
-use SlimAuryn\SlimAurynException;
-use function SlimAuryn\convertStringToHtmlResponse;
+use SlimDispatcher\Exception\UnresolvableCallableException;
+use SlimDispatcher\SlimDispatcherException;
+use function SlimDispatcher\convertStringToHtmlResponse;
 
 
 /**
@@ -55,7 +55,7 @@ class AurynCallableResolverTest extends BaseTestCase
     /**
      * @param $callable mixed, to support classname::method which
      *   isn't technically callable.
-     * @covers \SlimAuryn\AurynCallableResolver
+     * @covers \SlimDispatcher\AurynCallableResolver
      * @dataProvider providesCallableResolveFunctionWorks
      */
     public function testCallableResolveFunctionWorks($callable)
@@ -93,7 +93,7 @@ class AurynCallableResolverTest extends BaseTestCase
     }
 
     /**
-     * @covers \SlimAuryn\AurynCallableResolver::convertStubResponseToFullResponse
+     * @covers \SlimDispatcher\AurynCallableResolver::convertStubResponseToFullResponse
      */
     public function testCoversPSR7ResponsePassThrough()
     {
@@ -134,7 +134,7 @@ class AurynCallableResolverTest extends BaseTestCase
 
     /**
      * @param $alleged_callable
-     * @covers \SlimAuryn\AurynCallableResolver
+     * @covers \SlimDispatcher\AurynCallableResolver
      * @dataProvider providesCallableResolveFunctionErrors
      */
     public function testCallableResolveFunctionErrors($alleged_callable)
@@ -155,7 +155,7 @@ class AurynCallableResolverTest extends BaseTestCase
 
 
     /**
-     * @covers \SlimAuryn\AurynCallableResolver
+     * @covers \SlimDispatcher\AurynCallableResolver
      */
     public function testCallableReturnsBadType()
     {
@@ -172,9 +172,9 @@ class AurynCallableResolverTest extends BaseTestCase
 
         $fn = $callableResolver->resolve($fn);
 
-        $this->expectException(SlimAurynException::class);
+        $this->expectException(SlimDispatcherException::class);
         $this->expectExceptionMessageMatchesTemplateString(
-            SlimAurynException::UNKNOWN_RESULT_TYPE
+            SlimDispatcherException::UNKNOWN_RESULT_TYPE
         );
 
         $fn(
@@ -187,7 +187,7 @@ class AurynCallableResolverTest extends BaseTestCase
 
 
     /**
-     * @covers \SlimAuryn\AurynCallableResolver
+     * @covers \SlimDispatcher\AurynCallableResolver
      */
     public function testCallableNeedsARouteParameter()
     {

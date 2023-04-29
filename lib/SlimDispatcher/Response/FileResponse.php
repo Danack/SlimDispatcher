@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace SlimAuryn\Response;
+namespace SlimDispatcher\Response;
 
-use SlimAuryn\SlimAurynException;
-use SlimAuryn\Response\ResponseException;
+use SlimDispatcher\SlimDispatcherException;
+use SlimDispatcher\Response\ResponseException;
 
 class FileResponse implements StubResponse
 {

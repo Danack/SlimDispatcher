@@ -2,9 +2,9 @@
 
 namespace SlimAurynTest\Response;
 
-use SlimAuryn\Response\JsonResponse;
+use SlimDispatcher\Response\JsonResponse;
 use SlimAurynTest\BaseTestCase;
-use SlimAuryn\Response\InvalidDataException;
+use SlimDispatcher\Response\InvalidDataException;
 
 
 class JsonResponseTest extends BaseTestCase

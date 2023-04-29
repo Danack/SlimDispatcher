@@ -2,9 +2,9 @@
 
 namespace SlimAurynTest\Response;
 
-use SlimAuryn\Response\NotFoundResponse;
+use SlimDispatcher\Response\NotFoundResponse;
 use SlimAurynTest\BaseTestCase;
-use SlimAuryn\Response\InvalidDataException;
+use SlimDispatcher\Response\InvalidDataException;
 
 
 class NotFoundResponseTest extends BaseTestCase

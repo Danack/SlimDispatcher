@@ -5,13 +5,13 @@ namespace SlimAurynTest;
 use Auryn\Injector;
 use Auryn\InjectorException;
 use SlimAurynTest\BaseTestCase;
-use SlimAuryn\RouteParams;
-use SlimAuryn\RouteParamsException;
+use SlimDispatcher\RouteParams;
+use SlimDispatcher\RouteParamsException;
 
 use SlimAurynTest\Foo;
 use SlimAurynTest\FooPublicConstructor;
 use SlimAurynTest\BasicStringValue;
-use SlimAuryn\InjectionParams;
+use SlimDispatcher\InjectionParams;
 use SlimAurynTest\StringValue;
 use SlimAurynTest\MutableStringValue;
 

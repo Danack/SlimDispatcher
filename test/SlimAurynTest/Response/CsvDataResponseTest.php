@@ -2,9 +2,9 @@
 
 namespace SlimAurynTest\Response;
 
-use SlimAuryn\Response\CsvDataResponse;
+use SlimDispatcher\Response\CsvDataResponse;
 use SlimAurynTest\BaseTestCase;
-use SlimAuryn\Response\InvalidDataException;
+use SlimDispatcher\Response\InvalidDataException;
 
 
 class CsvDataResponseTest extends BaseTestCase

@@ -2,7 +2,7 @@
 
 declare(strict_types = 1);
 
-namespace SlimAuryn\Exception;
+namespace SlimDispatcher\Exception;
 
 class UnresolvableCallableException extends \Exception
 {

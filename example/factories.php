@@ -17,9 +17,9 @@ use Auryn\Injector;
 //    );
 //}
 
-function createExceptionMiddleware(): SlimAuryn\ExceptionMiddleware
+function createExceptionMiddleware(): SlimDispatcher\ExceptionMiddleware
 {
-    return new SlimAuryn\ExceptionMiddleware(
+    return new SlimDispatcher\ExceptionMiddleware(
         getExceptionMappers(),
         getResultMappers()
     );

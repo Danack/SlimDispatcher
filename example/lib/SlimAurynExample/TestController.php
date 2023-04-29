@@ -6,7 +6,7 @@ namespace SlimAurynExample;
 
 use Auryn\InjectionException;
 use Auryn\Injector;
-use SlimAuryn\Response\JsonResponse;
+use SlimDispatcher\Response\JsonResponse;
 use SlimAurynTest\Foo\Foo;
 use SlimAurynTest\IntegrationTest;
 

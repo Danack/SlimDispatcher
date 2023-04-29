@@ -6,7 +6,7 @@ namespace SlimAurynTest;
 
 use SlimAurynExample\NullMiddleware;
 use SlimAurynTest\BaseTestCase;
-use SlimAuryn\RouteMiddlewares;
+use SlimDispatcher\RouteMiddlewares;
 //use Slim\Http\Response;
 use UnexpectedValueException;
 use Psr\Http\Message\ServerRequestInterface;

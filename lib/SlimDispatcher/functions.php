@@ -2,14 +2,14 @@
 
 declare(strict_types = 1);
 
-namespace SlimAuryn;
+namespace SlimDispatcher;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use SlimAuryn\Response\StubResponse;
+use SlimDispatcher\Response\StubResponse;
 
 // Define a function that writes a string into the response object.
 function convertStringToHtmlResponse(string $result, ResponseInterface $response): ResponseInterface

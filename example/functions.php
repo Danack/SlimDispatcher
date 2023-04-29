@@ -1,14 +1,14 @@
 <?php
 
 use Psr\Http\Message\ResponseInterface;
-use SlimAuryn\Response\StubResponse;
+use SlimDispatcher\Response\StubResponse;
 use Slim\App;
 use Auryn\Injector;
 
 
 use SlimAurynTest\Foo\Foo;
 use SlimAurynTest\Foo\StandardFoo;
-use SlimAuryn\RouteMiddlewares;
+use SlimDispatcher\RouteMiddlewares;
 use SlimAurynExample\SingleRouteMiddleware;
 use SlimAurynExample\SingleRouteWithMessageMiddleware;
 use Laminas\Diactoros\ResponseFactory;

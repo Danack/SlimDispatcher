@@ -2,9 +2,9 @@
 
 namespace SlimAurynTest\Response;
 
-use SlimAuryn\Response\FileResponse;
+use SlimDispatcher\Response\FileResponse;
 use SlimAurynTest\BaseTestCase;
-use SlimAuryn\Response\ResponseException;
+use SlimDispatcher\Response\ResponseException;
 
 class FileResponseTest extends BaseTestCase
 {

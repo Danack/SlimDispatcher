@@ -1,12 +1,9 @@
 <?php
 
-namespace SlimAuryn\Response;
+namespace SlimDispatcher\Response;
 
-use SlimAuryn\Response\StubResponse;
-
-class TextResponse implements StubResponse
+class HtmlNoCacheResponse implements StubResponse
 {
-    /** @var string */
     private $body;
 
     private $headers = [];
@@ -25,19 +22,19 @@ class TextResponse implements StubResponse
     }
 
     /**
-     *
-     * @param string $string
+     * HtmlResponse constructor.
+     * @param string $html
      * @param array $headers
-     * @param int $status
      */
-    public function __construct(string $string, array $headers = [], int $status = 200)
+    public function __construct(string $html, array $headers = [], int $status = 200)
     {
         $standardHeaders = [
-            'Content-Type' => 'text/plain'
+            'Content-Type' => 'text/html',
+            'Cache-Control' => 'no-cache, no-store',
         ];
 
         $this->headers = array_merge($standardHeaders, $headers);
-        $this->body = $string;
+        $this->body = $html;
         $this->status = $status;
     }
 

@@ -2,7 +2,7 @@
 
 namespace SlimAurynExample;
 
-use SlimAuryn\Response\HtmlResponse;
+use SlimDispatcher\Response\HtmlResponse;
 use Twig\Environment as TwigEnvironment;
 
 class ResponseController

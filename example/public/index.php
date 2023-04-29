@@ -8,10 +8,10 @@ use Slim\Interfaces\CallableResolverInterface;
 use Slim\Interfaces\MiddlewareDispatcherInterface;
 use Slim\Interfaces\RouteCollectorInterface;
 use Slim\Interfaces\RouteResolverInterface;
-use SlimAuryn\AurynCallableResolver;
-use SlimAuryn\SlimAurynInvokerFactory;
+use SlimDispatcher\AurynCallableResolver;
+use SlimDispatcher\SlimAurynInvokerFactory;
 use SlimAurynExample\AllRoutesMiddleware;
-use SlimAuryn\ExceptionMiddleware;
+use SlimDispatcher\ExceptionMiddleware;
 
 error_reporting(E_ALL);
 

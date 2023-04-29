@@ -1,6 +1,6 @@
 <?php
 
-use SlimAuryn\InjectionParams;
+use SlimDispatcher\InjectionParams;
 
 function injectionParams(): InjectionParams
 {
@@ -8,7 +8,7 @@ function injectionParams(): InjectionParams
     $shares = [
         \Twig\Environment::class,
         \Auryn\Injector::class,
-        \SlimAuryn\RouteMiddlewares::class,
+        \SlimDispatcher\RouteMiddlewares::class,
     ];
 
     // Alias interfaces (or classes) to the actual types that should be used
@@ -23,7 +23,7 @@ function injectionParams(): InjectionParams
         Twig\Environment::class => 'createTwigForSite',
 //        SlimAuryn\SlimAurynInvokerFactory::class => 'createSlimAurynInvokerFactory',
 
-        SlimAuryn\ExceptionMiddleware::class => 'createExceptionMiddleware',
+        SlimDispatcher\ExceptionMiddleware::class => 'createExceptionMiddleware',
     ];
 
     // Define some params that can be injected purely by name.

@@ -2,9 +2,9 @@
 
 namespace SlimAurynTest;
 
-use SlimAuryn\Response\TextResponse;
+use SlimDispatcher\Response\TextResponse;
 
-use SlimAuryn\SlimAurynException;
+use SlimDispatcher\SlimDispatcherException;
 
 /**
  * @coversNothing
@@ -21,15 +21,15 @@ class SlimAurynExceptionTest extends BaseTestCase
     }
 
     /**
-     * @covers \SlimAuryn\SlimAurynException
+     * @covers \SlimDispatcher\SlimDispatcherException
      * @dataProvider providesWorks
      */
     public function testWorks($type, $string_to_check)
     {
-        $exception = SlimAurynException::unknownResultType($type);
+        $exception = SlimDispatcherException::unknownResultType($type);
 
         $this->assertStringMatchesTemplateString(
-            SlimAurynException::UNKNOWN_RESULT_TYPE,
+            SlimDispatcherException::UNKNOWN_RESULT_TYPE,
             $exception->getMessage()
         );
 

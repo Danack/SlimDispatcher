@@ -2,7 +2,7 @@
 
 namespace SlimAurynTest\Response;
 
-use SlimAuryn\Response\HtmlResponse;
+use SlimDispatcher\Response\HtmlResponse;
 use SlimAurynTest\BaseTestCase;
 
 class HtmlResponseTest extends BaseTestCase

@@ -1,8 +1,8 @@
 <?php
 
-namespace SlimAuryn;
+namespace SlimDispatcher;
 
-class SlimAurynException extends \Exception
+class SlimDispatcherException extends \Exception
 {
     const UNKNOWN_RESULT_TYPE = 'Resolved callable returned [%s] which is not a type known to the resultMappers.';
 

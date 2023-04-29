@@ -1,6 +1,6 @@
 <?php
 
-namespace SlimAuryn\Response;
+namespace SlimDispatcher\Response;
 
 class InvalidDataException extends \Exception
 {

@@ -1,9 +1,9 @@
 <?php
 
 
-namespace SlimAuryn\Response;
+namespace SlimDispatcher\Response;
 
-use SlimAuryn\Response\StubResponse;
+use SlimDispatcher\Response\StubResponse;
 
 class NotFoundResponse implements StubResponse
 {
