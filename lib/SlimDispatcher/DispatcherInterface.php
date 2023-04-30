@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 
 interface DispatcherInterface
 {
-    public function do_the_needful(Request $request, array $routeArguments, $resolvedCallable);
+    public function dispatch_route(Request $request, array $routeArguments, $resolvedCallable);
 
-    public function do_the_needful2($mapCallable, $result, Request $request, Response $response);
+    public function convert_response_to_html($mapCallable, $result, Request $request, Response $response);
 }

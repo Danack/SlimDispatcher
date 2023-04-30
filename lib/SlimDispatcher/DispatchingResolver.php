@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace SlimDispatcher;
 
-
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 use RuntimeException;
@@ -14,8 +13,8 @@ use SlimDispatcher\Exception\UnresolvableCallableException;
 class DispatchingResolver implements CallableResolverInterface
 {
     public function __construct(
-        private DispatcherInterface $injector,
-        private array $resultMappers
+        private DispatcherInterface $dispatcher,
+        private array               $resultMappers
     ) {
     }
 
@@ -27,21 +26,11 @@ class DispatchingResolver implements CallableResolverInterface
             array $routeArguments
         ) use ($resolvedCallable) {
 
-            $injector = $this->injector;
-//            // TODO - we could share $response
-//            $injector->alias(Request::class, get_class($request));
-//            $injector->share($request);
-//            foreach ($routeArguments as $key => $value) {
-//                $injector->defineParam($key, $value);
-//            }
-
-            $result = $injector->do_the_needful($request, $routeArguments, $resolvedCallable);
-
-
-//            $routeParams = new RouteParams($routeArguments);
-//            $injector->share($routeParams);
-//
-//            $result = $injector->execute($resolvedCallable);
+            $result = $this->dispatcher->dispatch_route(
+                $request,
+                $routeArguments,
+                $resolvedCallable
+            );
 
             return $this->convertStubResponseToFullResponse(
                 $result,
@@ -62,9 +51,8 @@ class DispatchingResolver implements CallableResolverInterface
         foreach ($this->resultMappers as $type => $mapCallable) {
             if ((is_object($result) && $result instanceof $type) ||
                 gettype($result) === $type) {
-//                return $this->injector->execute($mapCallable, [$result, $request, $response]);
 
-                return $this->injector->do_the_needful2($mapCallable, $result, $request, $response);
+                return $this->dispatcher->convert_response_to_html($mapCallable, $result, $request, $response);
             }
         }
 
@@ -74,7 +62,6 @@ class DispatchingResolver implements CallableResolverInterface
         if ($result instanceof Response) {
             return $result;
         }
-
 
         throw SlimDispatcherException::unknownResultType($result);
     }
